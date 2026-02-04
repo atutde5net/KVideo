@@ -23,6 +23,7 @@ interface UseDesktopPlayerLogicProps {
     data: DesktopPlayerState['data'];
     actions: DesktopPlayerState['actions'];
     fullscreenType?: 'native' | 'window';
+    isForceLandscape?: boolean;
 }
 
 export function useDesktopPlayerLogic({
@@ -34,7 +35,8 @@ export function useDesktopPlayerLogic({
     refs,
     data,
     actions,
-    fullscreenType = 'native'
+    fullscreenType = 'native',
+    isForceLandscape = false
 }: UseDesktopPlayerLogicProps) {
     const {
         videoRef, containerRef, progressBarRef, volumeBarRef,
@@ -104,7 +106,8 @@ export function useDesktopPlayerLogic({
 
     const progressControls = useProgressControls({
         videoRef, progressBarRef, duration,
-        setCurrentTime, isDraggingProgressRef
+        setCurrentTime, isDraggingProgressRef,
+        isRotated: isForceLandscape
     });
 
     const skipControls = useSkipControls({

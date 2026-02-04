@@ -42,8 +42,31 @@ export function DesktopVideoPlayer({
   const { fullscreenType: settingsFullscreenType } = usePlayerSettings();
   const isIOS = useIsIOS();
 
+  // State to track if device is in landscape mode
+  const [isLandscape, setIsLandscape] = React.useState(true);
+
+  React.useEffect(() => {
+    const checkOrientation = () => {
+      // Check if width > height
+      if (typeof window !== 'undefined') {
+        setIsLandscape(window.innerWidth > window.innerHeight);
+      }
+    };
+
+    checkOrientation();
+    window.addEventListener('resize', checkOrientation);
+    window.addEventListener('orientationchange', checkOrientation);
+    return () => {
+      window.removeEventListener('resize', checkOrientation);
+      window.removeEventListener('orientationchange', checkOrientation);
+    };
+  }, []);
+
   // Force windowed fullscreen on iOS to avoid native player hijacking
   const fullscreenType = isIOS ? 'window' : settingsFullscreenType;
+
+  // Check if we need to force landscape (iOS + Fullscreen + Portrait)
+  const shouldForceLandscape = data.isFullscreen && fullscreenType === 'window' && isIOS && !isLandscape;
 
   // Initialize HLS Player
   useHlsPlayer({
@@ -84,7 +107,8 @@ export function DesktopVideoPlayer({
     refs,
     data,
     actions,
-    fullscreenType
+    fullscreenType,
+    isForceLandscape: shouldForceLandscape
   });
 
   // Auto-skip intro/outro and auto-next episode
@@ -118,29 +142,6 @@ export function DesktopVideoPlayer({
     handleLoadedMetadata,
     handleVideoError,
   } = logic;
-
-  // State to track if device is in landscape mode
-  const [isLandscape, setIsLandscape] = React.useState(true);
-
-  React.useEffect(() => {
-    const checkOrientation = () => {
-      // Check if width > height
-      if (typeof window !== 'undefined') {
-        setIsLandscape(window.innerWidth > window.innerHeight);
-      }
-    };
-
-    checkOrientation();
-    window.addEventListener('resize', checkOrientation);
-    window.addEventListener('orientationchange', checkOrientation);
-    return () => {
-      window.removeEventListener('resize', checkOrientation);
-      window.removeEventListener('orientationchange', checkOrientation);
-    };
-  }, []);
-
-  // Check if we need to force landscape (iOS + Fullscreen + Portrait)
-  const shouldForceLandscape = data.isFullscreen && fullscreenType === 'window' && isIOS && !isLandscape;
 
   return (
     <div
