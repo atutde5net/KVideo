@@ -17,5 +17,5 @@ export interface SiteConfig {
 export const siteConfig: SiteConfig = {
   title: process.env.NEXT_PUBLIC_SITE_TITLE || "会员坟场 - 视频聚合平台",
   description: process.env.NEXT_PUBLIC_SITE_DESCRIPTION || "视频聚合平台",
-  name: process.env.NEXT_PUBLIC_SITE_NAME || "KVideo",
+  name: process.env.NEXT_PUBLIC_SITE_NAME || "会员坟场",
 };
